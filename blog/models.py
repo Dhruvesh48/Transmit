@@ -14,6 +14,16 @@ class Community(models.Model):
     def __str__(self):
         return f"{self.name}"
 
+class JoinCommunity(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    community = models.ForeignKey(Community, on_delete=models.CASCADE)
+    joined_at = models.DateTimeField(auto_now_add=True)
+
+    class meta:
+        unique_together = ('user', 'community')
+
+    def __str__(self):
+        return f"{self.user.username} in {self.community}"
 
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="blog_posts")

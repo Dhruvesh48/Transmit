@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import generic
-from .models import Post, Community
+from .models import Post, Community, JoinCommunity
 from .forms import CommunityForm
 
 # Create your views here.
@@ -76,3 +76,8 @@ def create_community(request):
             'community_form': community_form
         }
     )
+
+def join_community(request, community_id):
+    community = get_object_or_404(Community, id=community_id)
+    JoinCommunity.objects.get_or_create(user=request.user, community=community)
+    return redirect('community_detail', name=community.name)
