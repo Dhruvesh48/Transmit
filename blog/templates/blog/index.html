@@ -17,7 +17,7 @@
                 </div>
                 <div class="card-body light-bg">
                     <h5 class="card-title text-left">
-                        <a href="#" class="post-link">{{ post.title }}</a>
+                        <a href="{% url 'post_detail' post.slug %}" class="post-link">{{ post.title }}</a>
                     </h5>
                   <p class="card-text text-left"> {{post.content}} </p>
                 </div>
