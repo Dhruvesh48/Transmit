@@ -1,0 +1,24 @@
+a {
+    color: #000;
+    text-decoration: none;
+}
+
+.dark-bg {
+    background-color: #445261;
+}
+.light-bg {
+    background-color: #fff;
+}
+.blue-t {
+    color: #004aad;
+}
+.orange-m {
+    color: #f15226;
+}
+.post-link {
+    text-decoration: none;
+    color: #445261;
+}
+.text-left {
+    text-align: left;
+}
