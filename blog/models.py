@@ -5,8 +5,19 @@ STATUS = ((0, "Draft"), (1, "Published"))
 
 
 # Create your models here.
+class Community(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="blog_community")
+    name = models.CharField(max_length=500, unique=True)
+    description = models.TextField()
+    created_on = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name}"
+
+
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="blog_posts")
+    community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name="community", default=None, null=True)
     title = models.CharField(max_length=200, unique=True)
     slug = models.SlugField(max_length=200, unique=True)
     content = models.TextField()
