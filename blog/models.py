@@ -10,6 +10,7 @@ class Community(models.Model):
     name = models.CharField(max_length=500, unique=True)
     description = models.TextField()
     created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.name}"
@@ -18,12 +19,13 @@ class JoinCommunity(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     community = models.ForeignKey(Community, on_delete=models.CASCADE)
     joined_at = models.DateTimeField(auto_now_add=True)
+    
 
     class meta:
-        unique_together = ('user', 'community')
+        unique_together = ('user', 'community') # Prevent duplicate memberships
 
     def __str__(self):
-        return f"{self.user.username} in {self.community}"
+        return f"{self.user.username} in {self.community.name}"
 
 class Post(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="blog_posts")

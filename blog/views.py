@@ -8,7 +8,7 @@ class PostList(generic.ListView):
     queryset = Post.objects.filter(status=1)
     template_name = "blog/index.html"
 
-def post_detail(request, slug):
+def post_detail(request, slug, name):
     """
     Display an individual :model:`blog.Post`.
 
@@ -29,7 +29,9 @@ def post_detail(request, slug):
     return render(
         request,
         "blog/post_detail.html",
-        {"post": post},
+        {
+            "post": post,
+        },
     )
 
 def community_detail(request, name):
@@ -47,6 +49,16 @@ def community_detail(request, name):
     """
 
     community_profile = get_object_or_404(Community, name=name)
+    user_is_member = JoinCommunity.objects.filter(user=request.user, community=community_profile).exists()
+    if request.method == 'POST':
+        action = request.POST.get('follow')  # Get the action from the POST request
+        if action == "unfollow" and user_is_member:
+            # User wants to leave the community, and they are already a member
+            JoinCommunity.objects.filter(user=request.user, community=community_profile).delete()
+        elif action == "follow" and not user_is_member:
+            # User wants to join the community, and they are not yet a member
+            JoinCommunity.objects.create(user=request.user, community=community_profile)
+        return redirect('community_detail', name=community_profile.name)
     community_posts = Post.objects.filter(status=1, community=community_profile)
 
     return render(
@@ -54,6 +66,7 @@ def community_detail(request, name):
         "blog/community_detail.html",
         {
             "community_profile": community_profile,
+            "user_is_member": user_is_member,
             "community_posts": community_posts
         },
     )
@@ -76,8 +89,3 @@ def create_community(request):
             'community_form': community_form
         }
     )
-
-def join_community(request, community_id):
-    community = get_object_or_404(Community, id=community_id)
-    JoinCommunity.objects.get_or_create(user=request.user, community=community)
-    return redirect('community_detail', name=community.name)

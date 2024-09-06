@@ -4,6 +4,24 @@
 
 
 <h1> {{community_profile.name}} </h1>
+{% if user.is_authenticated %}
+    <form method="post">
+        {% csrf_token %}
+        {% if user_is_member %}
+            <!-- User is a member of the community, show "Leave" button -->
+            <button type="submit" class="btn btn-outline-primary" name="follow" value="unfollow" type="submit">
+                Joined
+            </button>
+        {% else %}
+            <!-- User is not a member, show "Join" button -->
+            <button type="submit" class="btn btn-primary" name="follow" value="follow" type="submit">
+                Join
+            </button>
+        {% endif %}
+    </form>
+{% else %}
+    <p><a href="{% url 'login' %}">Log in</a> to join this community.</p>
+{% endif %}
     {% for post in community_posts %}
     <div class="card">
         <div class="card-header light-bg text-left">
