@@ -1,3 +1,4 @@
+from django.utils.text import slugify
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -42,6 +43,19 @@ class Post(models.Model):
 
     def __str__(self):
         return f"{self.title}"
+    
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            # Create slug from the title
+            base_slug = slugify(self.title)
+            slug = base_slug
+            # Ensure the slug is unique
+            counter = 1
+            while Post.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = slug
+        super().save(*args, **kwargs)
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="comments")

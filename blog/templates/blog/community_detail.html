@@ -11,7 +11,7 @@
             <!-- User is a member of the community, show "Leave" button -->
             <button type="submit" class="btn btn-outline-primary" name="follow" value="unfollow" type="submit">
                 Joined
-            </button>
+            </button>            
         {% else %}
             <!-- User is not a member, show "Join" button -->
             <button type="submit" class="btn btn-primary" name="follow" value="follow" type="submit">
@@ -19,22 +19,32 @@
             </button>
         {% endif %}
     </form>
+    <form id="postForm" action="{% url 'create_post' %}" method="POST">     
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Create a Post</button>
+    </form>
 {% else %}
     <p><a href="{% url 'login' %}">Log in</a> to join this community.</p>
 {% endif %}
-    {% for post in community_posts %}
-    <div class="card">
-        <div class="card-header light-bg text-left">
-            {{ post.user }}
-        </div>
-        <div class="card-body light-bg">
-            <h5 class="card-title text-left">
-                {{ post.title }}
-            </h5>
-          <p class="card-text text-left"> {{post.content}} </p>
-        </div>
-    </div>
-    {% endfor %}
+{% if community_posts %}
+    <ul>
+        {% for post in community_posts %}
+        <li class="card">
+            <div class="card-header light-bg text-left">
+                {{ post.user }}
+            </div>
+            <div class="card-body light-bg">
+                <h5 class="card-title text-left">
+                    {{ post.title }}
+                </h5>
+            <p class="card-text text-left"> {{post.content}} </p>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No posts in this community yet.</p>
+{% endif %}
 
 
 

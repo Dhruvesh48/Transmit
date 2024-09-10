@@ -1,14 +1,14 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import generic
 from .models import Post, Community, JoinCommunity
-from .forms import CommunityForm
+from .forms import CommunityForm, PostForm
 
 # Create your views here.
 class PostList(generic.ListView):
     queryset = Post.objects.filter(status=1)
-    template_name = "blog/index.html"
+    template_name = "blog/index.html" 
 
-def post_detail(request, slug, name):
+def post_detail(request, slug):
     """
     Display an individual :model:`blog.Post`.
 
@@ -34,6 +34,27 @@ def post_detail(request, slug, name):
         },
     )
 
+def create_post(request):
+    if request.method == 'POST':
+        post_form = PostForm(request.POST)
+        if post_form.is_valid():
+            post = post_form.save(commit=False)
+            print("User: ", request.user)  # Debugging user
+            print("Community: ", post_form.cleaned_data.get('community'))
+            post.user = request.user  # Associate the post with the current user
+            post.save()
+            return redirect('community_detail', name=post.community.name)  # Redirect to the community page after posting
+    else:
+        post_form = PostForm()
+
+    return render(
+        request, 
+        'blog/create_post.html', 
+        {
+            'post_form': post_form
+        }
+    )
+
 def community_detail(request, name):
     """
     Display an individual :model:`blog.Community`.
@@ -49,6 +70,7 @@ def community_detail(request, name):
     """
 
     community_profile = get_object_or_404(Community, name=name)
+    community_posts = Post.objects.filter(status=1, community=community_profile)
     user_is_member = JoinCommunity.objects.filter(user=request.user, community=community_profile).exists()
     if request.method == 'POST':
         action = request.POST.get('follow')  # Get the action from the POST request
@@ -59,7 +81,7 @@ def community_detail(request, name):
             # User wants to join the community, and they are not yet a member
             JoinCommunity.objects.create(user=request.user, community=community_profile)
         return redirect('community_detail', name=community_profile.name)
-    community_posts = Post.objects.filter(status=1, community=community_profile)
+    
 
     return render(
         request,

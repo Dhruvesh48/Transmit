@@ -1,5 +1,5 @@
 from django import forms
-from .models import Community
+from .models import Community, Post
 
 class CommunityForm(forms.ModelForm):
     class Meta:
@@ -11,3 +11,8 @@ class CommunityForm(forms.ModelForm):
         if Community.objects.filter(name__iexact=name).exists():
             raise forms.ValidationError("A community with this name already exists.")
         return name
+    
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['community', 'title', 'content', 'status']
