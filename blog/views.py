@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.views import generic
-from .models import Post, Community, JoinCommunity
-from .forms import CommunityForm, PostForm
+from django.contrib import messages
+from .models import Post, Community, JoinCommunity, Vote
+from .forms import CommunityForm, PostForm, CommentForm
 
 # Create your views here.
 class PostList(generic.ListView):
@@ -24,13 +25,32 @@ def post_detail(request, slug):
 
     queryset = Post.objects.filter(status=1)
     post = get_object_or_404(queryset, slug=slug)
-    
+
+    comments = post.comments.all().order_by("-created_on")
+    comment_count = post.comments.all().count()
+
+    if request.method == "POST":
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.user = request.user
+            comment.post = post
+            comment.save()
+            messages.add_message(
+                request, messages.SUCCESS,
+                'Comment submitted'
+            )
+
+    comment_form = CommentForm()
 
     return render(
         request,
         "blog/post_detail.html",
         {
             "post": post,
+            "comments": comments,
+            "comment_count": comment_count,
+            "comment_form": comment_form,
         },
     )
 
@@ -109,5 +129,42 @@ def create_community(request):
         'blog/create_community.html', 
         {
             'community_form': community_form
+        }
+    )
+
+from django.shortcuts import get_object_or_404, redirect
+from .models import Post, Vote
+
+def vote_post(request, post_id, vote_type):
+
+    queryset = Post.objects.filter(status=1)
+    post = get_object_or_404(queryset, id=post_id)
+    
+    # Validate vote_type
+    if vote_type not in ['1', '0']:
+        return redirect('post_detail', slug=post.slug)
+
+    vote_type = int(vote_type)
+    
+    # Check if the user has already voted
+    existing_vote = Vote.objects.filter(user=request.user, post=post).first()
+
+    if existing_vote:
+        if existing_vote.vote_type == vote_type:
+            # Remove the vote if it's the same as before
+            existing_vote.delete()
+        else:
+            # Update the vote to the new type
+            existing_vote.vote_type = vote_type
+            existing_vote.save()
+    else:
+        # Create a new vote
+        Vote.objects.create(user=request.user, post=post, vote_type=vote_type)
+
+    return render(
+        request, 
+        'blog/create_post.html', 
+        {
+            'vote_type': vote_type,
         }
     )
