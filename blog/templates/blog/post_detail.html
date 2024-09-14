@@ -16,13 +16,35 @@
                 to iterate through each comment in comments -->
               <div>
                 {% if user.is_authenticated and post.user == user %}
-                  <button class="btn btn-edit"><a href="{% url 'edit_post' slug=post.slug %}">Edit</a></button>
-                  <button class="btn btn-edit"><a href="{% url 'delete_post' slug=post.slug %}">Delete</a></button>
+                  <button class="btn"><a href="{% url 'edit_post' slug=post.slug %}">Edit</a></button>
+                  <button class="btn btn-danger btn-delete-post" post_slug="{{ post.slug }}">Delete Post</button>
+
                 {% endif %}
+                <a href="{% url 'home' %}">Back to Posts</a>
               </div>
             </div>
         </div>
     </div>
+</div>
+
+<!-- Delete confirmation modal for posts-->
+<div class="modal fade" id="deletePostModal" tabindex="-1"
+  aria-labelledby="deletePostModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deletePostModalLabel">Delete post?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete your post? This action cannot be undone.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <a id="deletePostConfirm" href="#" class="btn btn-danger">Delete</a>
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="container">
@@ -82,7 +104,7 @@
           </div>
           {% if user.is_authenticated and comment.user == user %}
             <button class="btn btn-edit"comment_id="{{ comment.id }}">Edit</button>
-              <button class="btn btn-delete"comment_id="{{ comment.id }}">Delete</button>
+            <button class="btn btn-delete-comment"comment_id="{{ comment.id }}">Delete</button>
           {% endif %}
         </div>
         <!-- Our for loop ends here -->
@@ -110,26 +132,21 @@
   </div>
 </div>
 
-<!-- Delete confirmation modal -->
-<div class="modal fade" id="deleteModal" tabindex="-1"
-  aria-labelledby="deleteModalLabel" aria-hidden="true">
+<!-- Delete confirmation modal for comments-->
+<div class="modal fade" id="deleteCommentModal" tabindex="-1"
+  aria-labelledby="deleteCommentModalLabel" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title"
-          id="deleteModalLabel">Delete comment?</h5>
-        <button type="button" class="btn-close"
-          data-bs-dismiss="modal" aria-label="Close"></button>
+        <h5 class="modal-title" id="deleteCommentModalLabel">Delete comment?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        Are you sure you want to delete your comment?
-        This action cannot be undone.
+        Are you sure you want to delete your comment? This action cannot be undone.
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary"
-          data-bs-dismiss="modal">Close</button>
-        <a id="deleteConfirm" href="#" class="btn
-          btn-danger">Delete</a>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <a id="deleteCommentConfirm" href="#" class="btn btn-danger">Delete</a>
       </div>
     </div>
   </div>
@@ -139,4 +156,6 @@
 
 {% block extras %}
 <script src="{% static 'js/comments.js' %}"></script>
+<script src="{% static 'js/posts.js' %}"></script>
+
 {% endblock %}

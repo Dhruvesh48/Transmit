@@ -186,14 +186,21 @@ def edit_post(request, slug):
     return render(request, 'blog/edit_post.html', {'post_form': post_form, 'post': post})
 
 def delete_post(request, slug):
-    post = get_object_or_404(Post, slug=slug)
+    queryset = Post.objects.filter(status=1)
+    post = get_object_or_404(queryset, slug=slug)
 
-    if request.method == 'POST':
-        post.delete()  # Delete the post
-        messages.success(request, "Post deleted successfully!")
-        return redirect('home')  # Redirect to the list of posts (or another appropriate view)
+    if request.user != post.user:
+        messages.error(request, "You are not allowed to delete this post.")
+        return redirect('post_detail', slug=post.slug)
 
-    return render(request, 'blog/delete_post.html', {'post': post})
+    # Delete the post
+    post.delete()
+
+    # Add a success message
+    messages.success(request, "Post deleted successfully.")
+
+    # Redirect back to the post list
+    return HttpResponseRedirect(reverse('home'))
 
 
 def comment_edit(request, slug, comment_id):
