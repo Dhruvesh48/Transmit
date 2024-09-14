@@ -20,7 +20,6 @@
                   <button class="btn btn-danger btn-delete-post" post_slug="{{ post.slug }}">Delete Post</button>
 
                 {% endif %}
-                <a href="{% url 'home' %}">Back to Posts</a>
               </div>
             </div>
         </div>
@@ -60,19 +59,25 @@
         </div>
     </div>
     {% if user.is_authenticated %}
-        <form method="post" action="{% url 'vote_post' post.id 1 %}">
+      <div class="voting">
+        <!-- Upvote Form -->
+        <form method="post" action="{% url 'vote_post' post.slug 1 %}">
             {% csrf_token %}
             <button type="submit" class="btn btn-success">Upvote</button>
         </form>
-        <form method="post" action="{% url 'vote_post' post.id 0 %}">
+
+        <!-- Downvote Form -->
+        <form method="post" action="{% url 'vote_post' post.slug 0 %}">
             {% csrf_token %}
             <button type="submit" class="btn btn-danger">Downvote</button>
         </form>
+
+        <p>Total Votes: {{ post.total_votes }}</p>
+      </div>
     {% else %}
         <p><a href="{% url 'login' %}">Log in</a> to vote.</p>
     {% endif %}
 
-    <p>Total Votes: {{ post.total_votes }}</p>
     <!-- Displaying count of comments -->
   <div class="row">
     <div class="col-12">
@@ -84,6 +89,7 @@
       <hr>
     </div>
   </div>
+
   <!-- Displaying Comments -->
   <div class="row">
     <div class="col-md-8 card mb-4  mt-3 ">

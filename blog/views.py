@@ -61,11 +61,9 @@ def create_post(request):
         post_form = PostForm(request.POST)
         if post_form.is_valid():
             post = post_form.save(commit=False)
-            print("User: ", request.user)  # Debugging user
-            print("Community: ", post_form.cleaned_data.get('community'))
             post.user = request.user  # Associate the post with the current user
             post.save()
-            return redirect('community_detail', name=post.community.name)  # Redirect to the community page after posting
+            return redirect('community_detail', name=post.community)  # Redirect to the community page after posting
     else:
         post_form = PostForm()
 
@@ -73,7 +71,7 @@ def create_post(request):
         request, 
         'blog/create_post.html', 
         {
-            'post_form': post_form
+            'post_form': post_form,
         }
     )
 
@@ -135,39 +133,25 @@ def create_community(request):
         }
     )
 
-def vote_post(request, post_id, vote_type):
+def vote_post(request, slug, vote_type):
 
     queryset = Post.objects.filter(status=1)
-    post = get_object_or_404(queryset, id=post_id)
+    post = get_object_or_404(queryset, slug=slug)
+    user = request.user
     
-    # Validate vote_type
-    if vote_type not in ['1', '0']:
-        return redirect('post_detail', slug=post.slug)
-
-    vote_type = int(vote_type)
-    
-    # Check if the user has already voted
-    existing_vote = Vote.objects.filter(user=request.user, post=post).first()
-
-    if existing_vote:
-        if existing_vote.vote_type == vote_type:
-            # Remove the vote if it's the same as before
-            existing_vote.delete()
+    try:
+        vote = Vote.objects.get(user=user, post=post)
+        # If the user is trying to vote the same way, remove their vote
+        if vote.vote_type == vote_type:
+            vote.delete()
         else:
-            # Update the vote to the new type
-            existing_vote.vote_type = vote_type
-            existing_vote.save()
-    else:
-        # Create a new vote
-        Vote.objects.create(user=request.user, post=post, vote_type=vote_type)
+            vote.vote_type = vote_type
+            vote.save()
+    except Vote.DoesNotExist:
+        # Create a new vote if the user hasn't voted on the post yet
+        Vote.objects.create(user=user, post=post, vote_type=vote_type)
 
-    return render(
-        request, 
-        'blog/create_post.html', 
-        {
-            'vote_type': vote_type,
-        }
-    )
+    return redirect('post_detail', slug=post.slug)
 
 def edit_post(request, slug):
     """

@@ -59,8 +59,8 @@ class Post(models.Model):
     
     def total_votes(self):
         # Use vote_set to count total votes (upvotes minus downvotes)
-        upvotes = self.votes.filter(vote_type=1).count()
-        downvotes = self.votes.filter(vote_type=0).count()
+        upvotes = self.votes.filter(vote_type=Vote.UPVOTE).count()
+        downvotes = self.votes.filter(vote_type=Vote.DOWNVOTE).count()
         return upvotes - downvotes
     
 class Vote(models.Model):
