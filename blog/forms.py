@@ -1,5 +1,6 @@
 from django import forms
 from .models import Community, Post, Comment
+from django_summernote.widgets import SummernoteWidget
 
 class CommunityForm(forms.ModelForm):
     class Meta:
@@ -16,6 +17,9 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['community', 'title', 'content', 'status']
+        widgets = {
+            'content': SummernoteWidget(),  # Use Summernote for content
+        }
 
 class CommentForm(forms.ModelForm):
     class Meta:

@@ -45,7 +45,7 @@ class Post(models.Model):
         return f"{self.title}"
     
     def save(self, *args, **kwargs):
-        if not self.slug:
+        if not self.slug or slugify(self.title) != self.slug:
             # Create slug from the title
             base_slug = slugify(self.title)
             slug = base_slug

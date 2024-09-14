@@ -10,6 +10,16 @@
                 <h1 class="post-title">{{ post.title }}</h1>
                 <!-- Post author goes before the | the post's created date goes after -->
                 <p class="post-subtitle">{{ post.user }} | {{ post.created_on }}</p>
+            </div>        
+            <div class="card-body">
+              <!-- We want a for loop inside the empty control tags
+                to iterate through each comment in comments -->
+              <div>
+                {% if user.is_authenticated and post.user == user %}
+                  <button class="btn btn-edit"><a href="{% url 'edit_post' slug=post.slug %}">Edit</a></button>
+                  <button class="btn btn-edit"><a href="{% url 'delete_post' slug=post.slug %}">Delete</a></button>
+                {% endif %}
+              </div>
             </div>
         </div>
     </div>
