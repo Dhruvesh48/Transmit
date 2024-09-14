@@ -13,6 +13,11 @@
                 {% csrf_token %}
                 <button type="submit" class="btn btn-primary">Create a Community</button>
             </form>
+            <!-- {% for community in community_profile %}
+                {% if request.user in community.users.all %}
+                    {{ community.name }}
+                {% endif %}
+            {% endfor %} -->
             {% else %}
                 <p>Log in to create a community</p>
             {% endif %}
@@ -30,7 +35,9 @@
                         <h5 class="card-title text-left">
                             {{ post.title }}
                         </h5>
-                        <p class="card-text text-left"> {{ post.content | safe }} </p>
+                        <article class="card-text text-left">
+                            {{ post.content | safe }} 
+                        </article>
                     </a>
                 </div>
             </div>
