@@ -5,6 +5,7 @@ urlpatterns = [
     path('<slug:slug>/delete_comment/<int:comment_id>',views.comment_delete, name='comment_delete'),
     path('<slug:slug>/edit_comment/<int:comment_id>',views.comment_edit, name='comment_edit'),
     path('<slug:slug>/edit/', views.edit_post, name='edit_post'),
+    path('profile/<str:username>/', views.user_profile, name='user_profile'),
     path('delete_post/<slug:slug>/', views.delete_post, name='delete_post'),
     path('community/<str:name>/', views.community_detail, name='community_detail'),
     path('create-community/', views.create_community, name='create_community'),

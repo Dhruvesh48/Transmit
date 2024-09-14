@@ -1,6 +1,7 @@
 {% load static %}
 
 {% url 'home' as home_url %}
+{% url 'user_profile' as profile_url %}
 {% url 'account_login' as login_url %}
 {% url 'account_signup' as signup_url %}
 {% url 'account_logout' as logout_url %}
@@ -34,7 +35,7 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
-          <a class="navbar-brand" href="{% url 'home' %}">Navbar</a>
+          <a class="navbar-brand" href="{% url 'home' %}">Transmit</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -43,10 +44,10 @@
                 <li class="nav-item">
                     <a class="nav-link {% if request.path == home_url %}active{%endif%}" aria-current="page" href="#">Home</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
-                </li>
                 {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link {% if request.path == profile_url %}active{% endif %}" aria-current="page" href="{% url 'user_profile' user.username %}">My Profile</a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link {% if request.path == logout_url %}active{% endif %}" aria-current="page" href="{% url 'account_logout' %}">Logout</a>
                 </li>

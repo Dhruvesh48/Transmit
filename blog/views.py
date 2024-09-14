@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django.views import generic
 from django.contrib import messages
 from django.http import HttpResponseRedirect
+from django.contrib.auth.models import User
 from .models import Post, Community, JoinCommunity, Vote, Comment
 from .forms import CommunityForm, PostForm, CommentForm
 
@@ -121,6 +122,7 @@ def create_community(request):
             community = community_form.save(commit=False)
             community.user = request.user
             community.save()
+            JoinCommunity.objects.create(user=request.user, community=community)
             return redirect('community_detail', name=community.name)
     else:
         community_form = CommunityForm()
@@ -239,3 +241,16 @@ def comment_delete(request, slug, comment_id):
         messages.add_message(request, messages.ERROR, 'You can only delete your own comments!')
 
     return HttpResponseRedirect(reverse('post_detail', args=[slug]))
+
+def user_profile(request, username):
+    # Get the user by their username
+    profile_user = get_object_or_404(User, username=username)
+    
+    # Fetch all posts made by this user
+    user_posts = Post.objects.filter(user=profile_user, status=1).order_by('-created_on')
+
+    # Pass the posts and user to the template
+    return render(request, 'blog/user_profile.html', {
+        'profile_user': profile_user,
+        'user_posts': user_posts
+    })
