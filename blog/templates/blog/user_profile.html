@@ -1,34 +1,50 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>{{ profile_user.username }}'s Profile</h1>
 
-{% for post in user_posts%}
-  <div class="card">
-      <div class="card-header light-bg text-left">
-          <a href="{% url 'community_detail' name=post.community %}" class="post-link">{{ post.community }}</a>
-      </div>
-      <div class="card-body light-bg">
-          <a href="{% url 'post_detail' slug=post.slug %}" class="post-link">
-              <h5 class="card-title text-left">
-                  {{ post.title }}
-              </h5>
-              <p class="card-text text-left"> {{post.content | safe}} </p>
-          </a>
+<div class="container text-left">
+  <div class="row">
+      <div class="col-md-6 offset-md-2">
+          <h1> {{ profile_user.username }} </h1>
+          {% if user_posts %}
+            {% for post in user_posts%}
+              <div class="card">
+                  <div class="card-header light-bg text-left">
+                      <a href="{% url 'community_detail' name=post.community %}" class="post-link">{{ post.community }}</a>
+                  </div>
+                  <div class="card-body light-bg">
+                      <a href="{% url 'post_detail' slug=post.slug %}" class="post-link">
+                          <h5 class="card-title text-left">
+                              {{ post.title }}
+                          </h5>
+                          <p class="card-text text-left"> {{post.content | safe}} </p>
+                      </a>
+                  </div>
+              </div>
+            {% endfor %}
+          {% else %}
+              <p>No posts yet</p>
+          {% endif %}
+          {% if user.is_authenticated %}
+            {% for post in user_draft_posts %}
+              <h2>Draft Posts</h2>
+              <div class="card">
+                <a href="{% url 'edit_post' slug=post.slug %}" class="post-link">
+                  <div class="card-header light-bg text-left">
+                      {{ post.title }}
+                  </div>
+                  <div class="card-body light-bg">
+                      <p class="card-text text-left"> {{post.content | safe}} </p>
+                  </div>
+                </a>
+              </div>
+            {% empty %}
+              <li>No drafts yet.</li>
+            {% endfor %}
+          {% endif %}
       </div>
   </div>
-{% endfor %}
+</div>
 
-<h2>Draft Posts</h2>
-<ul>
-  {% for post in user_draft_posts %}
-    <li>
-      <a href="{% url 'edit_post' slug=post.slug %}">{{ post.title }}</a> 
-      (Last updated: {{ post.updated_at }})
-    </li>
-  {% empty %}
-    <li>No drafts yet.</li>
-  {% endfor %}
-</ul>
   
 {% endblock %}

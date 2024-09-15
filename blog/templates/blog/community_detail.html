@@ -23,7 +23,7 @@
                     </form>
                     <form id="postForm" action="{% url 'create_post' %}" method="POST">     
                         {% csrf_token %}
-                        <button type="submit" class="btn btn-outline-success">Create a Post <i class="fa-solid fa-plus"></i></button>
+                        <button type="submit" class="btn btn-success">Create a Post <i class="fa-solid fa-plus"></i></button>
                     </form>
                 {% else %}
                     <p><a href="{% url 'account_login' %}">Log in</a> to join this community.</p>
@@ -36,8 +36,9 @@
                     <div class="card" style="width: 50rem;">
                         <div class="card-header">
                             <a href="{% url 'user_profile' post.user.username %}">
-                                {{ post.user }}
+                                {{ post.user }} 
                             </a>
+                            <small class="text-muted">| {{ post.created_on }}</small>
                         </div>
                         <div class="card-body">
                             <a href="{% url 'post_detail' slug=post.slug %}" class="post-link">
