@@ -3,9 +3,14 @@ a {
     text-decoration: none;
 }
 
-.dark-bg {
-    background-color: #445261;
+.blue-bg {
+    background-color: #004aad;
 }
+
+.orange-bg {
+    background-color: #f15226;
+}
+
 .light-bg {
     background-color: #fff;
 }

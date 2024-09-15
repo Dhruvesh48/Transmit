@@ -75,7 +75,7 @@
         <p>Total Votes: {{ post.total_votes }}</p>
       </div>
     {% else %}
-        <p><a href="{% url 'login' %}">Log in</a> to vote.</p>
+        <p><a href="{% url 'account_login' %}">Log in</a> to vote.</p>
     {% endif %}
 
     <!-- Displaying count of comments -->

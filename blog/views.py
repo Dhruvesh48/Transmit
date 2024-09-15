@@ -86,8 +86,12 @@ def community_detail(request, name):
 
     **Context**
 
-    ``post``
+    ``community_profile``
         An instance of :model:`blog.Community`.
+    ``community_posts``
+        Posts associated with the community.
+    ``user_is_member``
+        Boolean indicating if the current user is a member of the community.
 
     **Template:**
 
@@ -96,16 +100,20 @@ def community_detail(request, name):
 
     community_profile = get_object_or_404(Community, name=name)
     community_posts = Post.objects.filter(status=1, community=community_profile)
-    user_is_member = JoinCommunity.objects.filter(user=request.user, community=community_profile).exists()
-    if request.method == 'POST':
-        action = request.POST.get('follow')  # Get the action from the POST request
-        if action == "unfollow" and user_is_member:
-            # User wants to leave the community, and they are already a member
-            JoinCommunity.objects.filter(user=request.user, community=community_profile).delete()
-        elif action == "follow" and not user_is_member:
-            # User wants to join the community, and they are not yet a member
-            JoinCommunity.objects.create(user=request.user, community=community_profile)
-        return redirect('community_detail', name=community_profile.name)
+
+    # Initialize user_is_member to False by default
+    user_is_member = False
+    if request.user.is_authenticated:
+        user_is_member = JoinCommunity.objects.filter(user=request.user, community=community_profile).exists()
+        if request.method == 'POST':
+            action = request.POST.get('follow')  # Get the action from the POST request
+            if action == "unfollow" and user_is_member:
+                # User wants to leave the community, and they are already a member
+                JoinCommunity.objects.filter(user=request.user, community=community_profile).delete()
+            elif action == "follow" and not user_is_member:
+                # User wants to join the community, and they are not yet a member
+                JoinCommunity.objects.create(user=request.user, community=community_profile)
+            return redirect('community_detail', name=community_profile.name)
     
 
     return render(
