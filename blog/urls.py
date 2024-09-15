@@ -13,4 +13,5 @@ urlpatterns = [
     path('post/<slug:slug>/vote/<int:vote_type>/', views.vote_post, name='vote_post'),
     path('<slug:slug>/', views.post_detail, name='post_detail'),
     path('', views.PostList.as_view(), name='home'),
+    path('drafts/', views.DraftPostList.as_view(), name='draft_post_list'),
 ]

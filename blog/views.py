@@ -9,7 +9,12 @@ from .forms import CommunityForm, PostForm, CommentForm
 # Create your views here.
 class PostList(generic.ListView):
     queryset = Post.objects.filter(status=1)
-    template_name = "blog/index.html" 
+    template_name = "blog/index.html"
+
+class DraftPostList(generic.ListView):
+    queryset = Post.objects.filter(status=0)
+    template_name = "blog/user_profile.html"
+
 
 def post_detail(request, slug):
     """
@@ -157,8 +162,7 @@ def edit_post(request, slug):
     """
     view to edit posts
     """
-    queryset = Post.objects.filter(status=1)
-    post = get_object_or_404(queryset, slug=slug)
+    post = get_object_or_404(Post, slug=slug, user=request.user)
 
     if request.method == 'POST':
         post_form = PostForm(request.POST, instance=post)  # Load the existing post data into the form
@@ -232,9 +236,11 @@ def user_profile(request, username):
     
     # Fetch all posts made by this user
     user_posts = Post.objects.filter(user=profile_user, status=1).order_by('-created_on')
+    user_draft_posts = Post.objects.filter(user=profile_user, status=0).order_by('-created_on')
 
     # Pass the posts and user to the template
     return render(request, 'blog/user_profile.html', {
         'profile_user': profile_user,
-        'user_posts': user_posts
+        'user_posts': user_posts,
+        'user_draft_posts': user_draft_posts
     })
