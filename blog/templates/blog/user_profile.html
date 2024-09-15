@@ -14,11 +14,12 @@
                   </div>
                   <div class="card-body light-bg">
                       <a href="{% url 'post_detail' slug=post.slug %}" class="post-link">
-                          <h5 class="card-title text-left">
-                              {{ post.title }}
-                          </h5>
-                          <p class="card-text text-left"> {{post.content | safe}} </p>
+                        <h5 class="card-title text-left">
+                            {{ post.title }}
+                        </h5>
                       </a>
+                      <p class="card-text text-left"> {{post.content | safe}} </p>
+                      
                   </div>
               </div>
             {% endfor %}
@@ -26,8 +27,8 @@
               <p>No posts yet</p>
           {% endif %}
           {% if user.is_authenticated %}
+          <h2>Draft Posts</h2>
             {% for post in user_draft_posts %}
-              <h2>Draft Posts</h2>
               <div class="card">
                 <a href="{% url 'edit_post' slug=post.slug %}" class="post-link">
                   <div class="card-header light-bg text-left">

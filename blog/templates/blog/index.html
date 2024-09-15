@@ -5,20 +5,8 @@
 
 <!-- index.html content starts here -->
  
-<div class="container px-4 text-center">
+<div class="container px-4">
     <div class="row gx-5">
-      <div class="col-md-2">
-       <div class="p-3 blue-bg">
-            {% if user.is_authenticated %}
-            <form id="communityForm" action="{% url 'create_community' %}" method="POST">     
-                {% csrf_token %}
-                <button type="submit" class="btn btn-primary">Create a Community</button>
-            </form>
-            {% else %}
-                <p>Log in to create a community</p>
-            {% endif %}
-       </div>
-      </div>
       <div class="col-md-10">
         <div class="p-3 blue-bg">
             {% for post in post_list%}
@@ -31,10 +19,10 @@
                         <h5 class="card-title text-left">
                             {{ post.title }}
                         </h5>
-                        <article class="card-text text-left">
-                            {{ post.content | safe }} 
-                        </article>
                     </a>
+                        <p class="card-text text-left">
+                            {{ post.content | safe}} 
+                        </p>
                 </div>
             </div>
             {% endfor %}
