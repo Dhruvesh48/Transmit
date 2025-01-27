@@ -2,50 +2,55 @@
 
 {% block content %}
 
-<div class="container text-left">
-  <div class="row">
-      <div class="col-md-6 offset-md-2">
-          <h1> {{ profile_user.username }} </h1>
-          {% if user_posts %}
-            {% for post in user_posts%}
-              <div class="card">
-                  <div class="card-header light-bg text-left">
-                      <a href="{% url 'community_detail' name=post.community %}" class="post-link">{{ post.community }}</a>
-                  </div>
-                  <div class="card-body light-bg">
-                      <a href="{% url 'post_detail' slug=post.slug %}" class="post-link">
-                        <h5 class="card-title text-left">
-                            {{ post.title }}
-                        </h5>
-                      </a>
-                      <p class="card-text text-left"> {{post.content | safe}} </p>
-                      
-                  </div>
-              </div>
-            {% endfor %}
-          {% else %}
-              <p>No posts yet</p>
-          {% endif %}
-          {% if user.is_authenticated %}
-          <h2>Draft Posts</h2>
-            {% for post in user_draft_posts %}
-              <div class="card">
-                <a href="{% url 'edit_post' slug=post.slug %}" class="post-link">
-                  <div class="card-header light-bg text-left">
-                      {{ post.title }}
-                  </div>
-                  <div class="card-body light-bg">
-                      <p class="card-text text-left"> {{post.content | safe}} </p>
-                  </div>
-                </a>
-              </div>
-            {% empty %}
-              <li>No drafts yet.</li>
-            {% endfor %}
-          {% endif %}
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <!-- User Profile Section -->
+    <div class="col-lg-8 col-md-10">
+      <h1 class="text-center mb-4">{{ profile_user.username }}</h1>
+      
+      <!-- User Posts Section -->
+      {% if user_posts %}
+        {% for post in user_posts %}
+          <div class="card mb-3 shadow-sm">
+            <div class="card-header bg-primary text-white text-start">
+              <a href="{% url 'community_detail' name=post.community %}" class="post-link text-white">{{ post.community }}</a>
+            </div>
+            <div class="card-body bg-white">
+              <a href="{% url 'post_detail' slug=post.slug %}" class="post-link">
+                <h5 class="card-title">{{ post.title }}</h5>
+              </a>
+              <p class="card-text">{{ post.content | safe }}</p>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <p class="text-center text-muted">No posts yet</p>
+      {% endif %}
+    </div>
+
+    <!-- Draft Posts Section (Aligned Right) -->
+    {% if user.is_authenticated %}
+      <div class="col-lg-4 col-md-6 mt-5 mt-md-0">
+        <h2>Draft Posts</h2>
+        {% if user_draft_posts %}
+          {% for post in user_draft_posts %}
+            <div class="card mb-3 shadow-sm">
+              <a href="{% url 'edit_post' slug=post.slug %}" class="post-link">
+                <div class="card-header bg-light text-start">
+                  {{ post.title }}
+                </div>
+                <div class="card-body bg-white">
+                  <p class="card-text">{{ post.content | safe }}</p>
+                </div>
+              </a>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-center text-muted">No drafts yet.</p>
+        {% endif %}
       </div>
+    {% endif %}
   </div>
 </div>
 
-  
 {% endblock %}

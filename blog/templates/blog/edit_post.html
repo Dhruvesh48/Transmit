@@ -4,19 +4,21 @@
 {% block content %}
 
 <div class="container px-4 text-center">
-    <div class="row gx-5">
-      <div class="col-md-4">
-       <div class="p-3">
-        <h1>Edit Post: {{ post.title }}</h1>
+  <div class="row gx-5">
+    <div class="col-md-8 col-lg-6 mx-auto">
+      <div class="p-4 border rounded shadow-sm">
+        <h1 class="mb-4">Edit Post: {{ post.title }}</h1>
         <form method="post">
             {% csrf_token %}
             {{ post_form | crispy }}
-            <button type="submit">Update Post</button>
+            <div class="d-flex justify-content-between">
+              <button type="submit" class="btn btn-primary">Update Post</button>
+              <a href="{% url 'user_profile' user.username %}" class="btn btn-secondary">Cancel</a>
+            </div>
         </form>
-        <a href="{% url 'post_detail' slug=post.slug %}">Cancel</a>
-       </div>
       </div>
     </div>
+  </div>
 </div>
 
 {% endblock %}

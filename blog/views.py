@@ -61,9 +61,9 @@ def create_post(request):
         post_form = PostForm(request.POST)
         if post_form.is_valid():
             post = post_form.save(commit=False)
-            post.user = request.user  # Associate the post with the current user
+            post.user = request.user
             post.save()
-            return redirect('community_detail', name=post.community)  # Redirect to the community page after posting
+            return redirect('community_detail', name=post.community)
     else:
         post_form = PostForm()
 
@@ -96,17 +96,14 @@ def community_detail(request, name):
     community_profile = get_object_or_404(Community, name=name)
     community_posts = Post.objects.filter(status=1, community=community_profile)
 
-    # Initialize user_is_member to False by default
     user_is_member = False
     if request.user.is_authenticated:
         user_is_member = JoinCommunity.objects.filter(user=request.user, community=community_profile).exists()
         if request.method == 'POST':
-            action = request.POST.get('follow')  # Get the action from the POST request
+            action = request.POST.get('follow')
             if action == "unfollow" and user_is_member:
-                # User wants to leave the community, and they are already a member
                 JoinCommunity.objects.filter(user=request.user, community=community_profile).delete()
             elif action == "follow" and not user_is_member:
-                # User wants to join the community, and they are not yet a member
                 JoinCommunity.objects.create(user=request.user, community=community_profile)
             return redirect('community_detail', name=community_profile.name)
     
@@ -149,14 +146,12 @@ def vote_post(request, slug, vote_type):
     
     try:
         vote = Vote.objects.get(user=user, post=post)
-        # If the user is trying to vote the same way, remove their vote
         if vote.vote_type == vote_type:
             vote.delete()
         else:
             vote.vote_type = vote_type
             vote.save()
     except Vote.DoesNotExist:
-        # Create a new vote if the user hasn't voted on the post yet
         Vote.objects.create(user=user, post=post, vote_type=vote_type)
 
     return redirect('post_detail', slug=post.slug)
@@ -168,13 +163,13 @@ def edit_post(request, slug):
     post = get_object_or_404(Post, slug=slug, user=request.user)
 
     if request.method == 'POST':
-        post_form = PostForm(request.POST, instance=post)  # Load the existing post data into the form
+        post_form = PostForm(request.POST, instance=post)
         if post_form.is_valid():
-            post_form.save()  # Save the edited post
+            post_form.save()
             messages.success(request, "Post updated successfully!")
-            return redirect('post_detail', slug=post.slug)  # Redirect to the post detail page
+            return redirect('post_detail', slug=post.slug)
     else:
-        post_form = PostForm(instance=post)  # Populate the form with the post data for editing
+        post_form = PostForm(instance=post)
 
     return render(request, 'blog/edit_post.html', {'post_form': post_form, 'post': post})
 
@@ -186,13 +181,10 @@ def delete_post(request, slug):
         messages.error(request, "You are not allowed to delete this post.")
         return redirect('post_detail', slug=post.slug)
 
-    # Delete the post
     post.delete()
 
-    # Add a success message
     messages.success(request, "Post deleted successfully.")
 
-    # Redirect back to the post list
     return HttpResponseRedirect(reverse('home'))
 
 
@@ -232,14 +224,11 @@ def comment_delete(request, slug, comment_id):
     return HttpResponseRedirect(reverse('post_detail', args=[slug]))
 
 def user_profile(request, username):
-    # Get the user by their username
     profile_user = get_object_or_404(User, username=username)
     
-    # Fetch all posts made by this user
     user_posts = Post.objects.filter(user=profile_user, status=1).order_by('-created_on')
     user_draft_posts = Post.objects.filter(user=profile_user, status=0).order_by('-created_on')
 
-    # Pass the posts and user to the template
     return render(request, 'blog/user_profile.html', {
         'profile_user': profile_user,
         'user_posts': user_posts,
