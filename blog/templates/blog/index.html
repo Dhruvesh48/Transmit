@@ -32,7 +32,7 @@
                 </div>
                 <div class="card-footer d-flex justify-content-between align-items-center">
                     <span class="text-muted">
-                        Posted by <strong>{{ post.user }}</strong>
+                        Posted by <a href="{% url 'user_profile' post.user.username %}"><strong>{{ post.user }}</strong></a>
                     </span>
                     <a href="{% url 'post_detail' slug=post.slug %}" class="btn btn-outline-primary btn-sm">Read More</a>
                 </div>
