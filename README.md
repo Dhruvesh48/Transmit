@@ -4,6 +4,9 @@
 
 Welcome to Transmit, your go-to platform for community-driven content and discussions! Inspired by the popular Reddit model, Transmit brings together users from all walks of life to share, discuss, and vote on topics that matter most to them.
 
+![Screenshot of responsiveness of the project](assets/images/responsive-checker.png)
+Visit the deployed site here :[Tic-Tac-Toe game](https://transmit-news-2e6d9a86e6e7.herokuapp.com/)
+
 ---
 
 ## Design
@@ -623,7 +626,7 @@ The User profile page shows the post user has made withing any community
 [W3C](https://validator.w3.org/) was used to validate all HTML pages, as well as the [CSS](https://jigsaw.w3.org/css-validator/#validate_by_uri) also [Jshint](https://jshint.com/) was used to validate JavaScript
   
 - html page W3C HTML Validation - Pass
-   ![HTML Validator results]()
+   ![HTML Validator results](assets/images/W3C-HTML.png)
 - style.css CSS Validation - Pass
    ![CSS Validator results](assets/images/W3C-CSS.png)
 - script.js JavaScript Validation - Pass
